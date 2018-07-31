@@ -7,6 +7,12 @@ verify_ssl = true
 
 [packages]
 flask = "*"
+coverage = "*"
+pytest = "*"
+"pytest-pep8" = "*"
+pytest-cache = "*"
+pycodestyle = "*"
+pylint = "*"
 
 [requires]
 python_version = "3.6"
