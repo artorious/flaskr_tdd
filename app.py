@@ -2,7 +2,7 @@
 import sqlite3
 from flask import (
     Flask, request, session, g, redirect, url_for, abort, \
-    abort, render_template, flash, jsonify
+    render_template, flash, jsonify
 )
 
 
@@ -45,7 +45,7 @@ def close_db(error):
 
 
 @app.route('/')
-def show_entries():
+def index():
     """Searches the database for entries, then displays them."""
     the_db = get_db()
     the_cursor = the_db.execute('select * from entries order by id desc')
@@ -53,8 +53,45 @@ def show_entries():
     return render_template('index.html', entries=entries)
 
 
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """User login/authentication/session management."""
+    error = None
+    if request.method == 'POST':
+        if request.form['username'] != app.config['USERNAME']:
+            error = 'Invalid username'
+        elif request.form['password'] != app.config['PASSWORD']:
+            error = 'Invalid password'
+        else:
+            session['logged_in'] = True
+            flash('You are logged in')
+            return redirect(url_for('index'))
+    return render_template('login.html', error=error)
+
+
+@app.route('/logout')
+def logout():
+    """User logout/authentication/session management."""
+    session.pop('logged_in', None)
+    flash('You are logged out')
+    return redirect(url_for('index'))
+
+@app.route('/add', methods=['POST'])
+def add_entry():
+    """Add new post to database."""
+    if not session.get('logged_in'):
+        abort(401)
+    the_db = get_db()
+    the_db.execute(
+        'insert into entries (title, text) values (?, ?)',
+        [request.form['title'], request.form['text']]
+    )
+    the_db.commit()
+    flash('New entry was successfully posted')
+    return redirect(url_for('index'))
+
 
 if '__name__' == '__main__':
-    init_db()   
+    init_db()
     app.run()
 
