@@ -46,7 +46,8 @@ class FlaskrTestCase(unittest.TestCase):
     
     def test_empty_db(self):
         """ Ensure database is blank. """
-        conn = self.app.get('/logout', follow_redirects=True)
+        conn = self.app.get('/')
+        assert b'No entries here so far' in conn.data
 
     def test_login_logout(self):
         """ Test login and logout using helper functions. """

@@ -44,6 +44,13 @@ def close_db(error):
         g.sqlite_db.close()
 
 
+@app.route('/')
+def show_entries():
+    """Searches the database for entries, then displays them."""
+    the_db = get_db()
+    the_cursor = the_db.execute('select * from entries order by id desc')
+    entries = the_cursor.fetchall()
+    return render_template('index.html', entries=entries)
 
 
 
