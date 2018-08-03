@@ -1,0 +1,15 @@
+language: python
+python:
+    - "3.6"
+
+# Requirements
+install: "make"
+
+# Tests
+script:
+    - coverage run -m pytest
+
+# coveralls
+after_success:
+    - coveralls
+
